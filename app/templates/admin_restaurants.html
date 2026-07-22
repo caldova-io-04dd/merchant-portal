@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Restaurants{% endblock %}
+{% block content %}
+<h1>Restaurants</h1>
+<table>
+  <tr><th>ID</th><th>Name</th><th>Contact</th><th>Status</th><th></th></tr>
+  {% for r in restaurants %}
+  <tr>
+    <td>{{ r.id }}</td>
+    <td>{{ r.name }}</td>
+    <td>{{ r.contact_email }}</td>
+    <td>{{ "Open" if r.active else "Paused" }}</td>
+    <td>
+      <form method="post" action="{{ url_for('admin.toggle_restaurant', restaurant_id=r.id) }}">
+        <button type="submit">{{ "Pause" if r.active else "Reopen" }}</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

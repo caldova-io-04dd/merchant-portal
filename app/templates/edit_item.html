@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Edit item{% endblock %}
+{% block content %}
+<h1>Edit item</h1>
+<form method="post">
+  <p><input name="name" value="{{ item.name }}"></p>
+  <p><input name="price" value="{{ '%.2f'|format(item.price_cents / 100) }}"></p>
+  <p>
+    <label>
+      <input type="checkbox" name="available" {{ "checked" if item.available }}>
+      Available
+    </label>
+  </p>
+  <button type="submit">Save</button>
+</form>
+{% endblock %}

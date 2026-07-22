@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<h1>Orders</h1>
+<p>
+  <a href="{{ url_for('orders.board') }}">All</a> ·
+  <a href="{{ url_for('orders.board', status='new') }}">New</a> ·
+  <a href="{{ url_for('orders.board', status='preparing') }}">Preparing</a> ·
+  <a href="{{ url_for('orders.board', status='ready') }}">Ready</a> ·
+  <a href="{{ url_for('orders.board', status='delivered') }}">Delivered</a>
+</p>
+
+<table>
+  <tr><th>#</th><th>Customer</th><th>Total</th><th>Status</th><th>Update</th></tr>
+  {% for order in orders %}
+  <tr>
+    <td>{{ order.id }}</td>
+    <td>{{ order.customer_name }}</td>
+    <td>{{ format_price(order.total_cents) }}</td>
+    <td>{{ order.status }}</td>
+    <td>
+      <form method="post" action="{{ url_for('orders.set_status', order_id=order.id) }}">
+        <select name="status">
+          <option value="new">new</option>
+          <option value="preparing">preparing</option>
+          <option value="ready">ready</option>
+          <option value="delivered">delivered</option>
+        </select>
+        <button type="submit">Set</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

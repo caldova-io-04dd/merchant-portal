@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Merchant Portal{% endblock %} · Robobites</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; color: #1c1c1c; }
+    header { background: #0f766e; color: #fff; padding: 12px 20px; }
+    nav a { color: #cffafe; margin-right: 16px; text-decoration: none; }
+    main { padding: 20px; max-width: 900px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e5e7eb; }
+    .flash { background: #fef3c7; padding: 8px 12px; border-radius: 6px; }
+    input, textarea, select { padding: 6px; font-size: 14px; }
+    button { background: #0f766e; color: #fff; border: 0; padding: 8px 14px;
+             border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>Robobites Merchant Portal</strong>
+    <nav style="margin-top: 6px;">
+      <a href="{{ url_for('menus.dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('menus.menu') }}">Menu</a>
+      <a href="{{ url_for('orders.board') }}">Orders</a>
+      <a href="{{ url_for('receipts.editor') }}">Receipts</a>
+      <a href="{{ url_for('auth.logout') }}">Sign out</a>
+    </nav>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages() %}
+      {% for message in messages %}
+        <p class="flash">{{ message }}</p>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
