@@ -1,22 +1,67 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-<h1>{{ restaurant.name }}</h1>
-<p>Status: {{ "Open" if restaurant.active else "Paused" }}</p>
+<div class="dashboard-shell">
+  <section class="panel hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Operations overview</span>
+      <h1>{{ restaurant.name }}</h1>
+      <div class="badge">{{ "Open for service" if restaurant.active else "Paused" }}</div>
+      <p>Keep prep times tight, track order flow, and keep customers happy from the first click to the final receipt.</p>
 
-<h2>Open orders ({{ open_orders|length }})</h2>
-<table>
-  <tr><th>#</th><th>Customer</th><th>Total</th><th>Status</th></tr>
-  {% for order in open_orders %}
-  <tr>
-    <td>{{ order.id }}</td>
-    <td>{{ order.customer_name }}</td>
-    <td>{{ format_price(order.total_cents) }}</td>
-    <td>{{ order.status }}</td>
-  </tr>
-  {% endfor %}
-</table>
+      <div class="stat-grid">
+        <div class="stat">
+          <span class="muted">Open orders</span>
+          <strong>{{ open_orders|length }}</strong>
+        </div>
+        <div class="stat">
+          <span class="muted">Menu items</span>
+          <strong>{{ items|length }}</strong>
+        </div>
+        <div class="stat">
+          <span class="muted">Status</span>
+          <strong>{{ "Live" if restaurant.active else "Paused" }}</strong>
+        </div>
+      </div>
+    </div>
 
-<h2>Menu ({{ items|length }} items)</h2>
-<p><a href="{{ url_for('menus.menu') }}">Manage menu &rarr;</a></p>
+    <div class="hero-art">
+      <img src="{{ url_for('static', filename='robobites-hero.svg') }}" alt="Robobites restaurant operations illustration">
+    </div>
+  </section>
+
+  <section class="stack">
+    <div class="card">
+      <h2>Open orders</h2>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Customer</th><th>Total</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          {% for order in open_orders %}
+          <tr>
+            <td><a href="{{ url_for('orders.detail', order_id=order.id) }}">#{{ order.id }}</a></td>
+            <td><a href="{{ url_for('orders.detail', order_id=order.id) }}">{{ order.customer_name }}</a></td>
+            <td>{{ format_price(order.total_cents) }}</td>
+            <td><span class="pill">{{ order.status }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Quick actions</h2>
+      <p class="muted">Keep the floor moving with one-click operational tasks.</p>
+      <div style="margin-top: 18px; display: grid; gap: 12px;">
+        <a class="pill" href="{{ url_for('menus.menu') }}">Manage menu</a>
+        <a class="pill" href="{{ url_for('orders.board') }}">View orders</a>
+        <a class="pill" href="{{ url_for('receipts.editor') }}">Edit receipts</a>
+      </div>
+      <div style="margin-top: 22px; text-align:center;">
+        <img src="{{ url_for('static', filename='robobites-badge.svg') }}" alt="Robobites badge" style="width: 160px; margin: 0 auto;">
+      </div>
+    </div>
+  </section>
+</div>
 {% endblock %}

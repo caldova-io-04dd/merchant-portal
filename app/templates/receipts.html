@@ -1,21 +1,35 @@
 {% extends "base.html" %}
 {% block title %}Receipts{% endblock %}
 {% block content %}
-<h1>Receipt template</h1>
-<p>Customize how printed receipts look for {{ restaurant.name }}. You can use
-   <code>{{ '{{ order.id }}' }}</code>, <code>{{ '{{ total }}' }}</code>, and
-   <code>{{ '{{ restaurant.name }}' }}</code> as placeholders.</p>
+<div class="stack">
+  <div class="card">
+    <h1>Receipt template</h1>
+    <p class="muted">Customize how printed receipts look for {{ restaurant.name }}. You can use
+       <code>{{ '{{ order.id }}' }}</code>, <code>{{ '{{ total }}' }}</code>, and
+       <code>{{ '{{ restaurant.name }}' }}</code> as placeholders.</p>
 
-<form method="post">
-  <p>
-    <textarea name="template" rows="8" cols="60">{{ template }}</textarea>
-  </p>
-  <button type="submit" name="action" value="preview">Preview</button>
-  <button type="submit" name="action" value="save">Save</button>
-</form>
+    <form method="post">
+      <div class="field">
+        <textarea name="template" rows="10">{{ template }}</textarea>
+      </div>
+      <div class="button-row">
+        <button type="submit" name="action" value="preview">Preview</button>
+        <button type="submit" name="action" value="save">Save</button>
+      </div>
+    </form>
+  </div>
 
-{% if preview is not none %}
-<h2>Preview</h2>
-<pre style="background:#f3f4f6;padding:12px;border-radius:6px;">{{ preview }}</pre>
-{% endif %}
+  <div class="card">
+    <h2>Preview</h2>
+    <img src="{{ url_for('static', filename='robobites-badge.svg') }}" alt="Robobites badge" style="width: 120px; margin-bottom: 12px;">
+    {% if preview is not none %}
+      <div class="receipt-box">{{ preview }}</div>
+    {% else %}
+      <div class="receipt-box">{{ restaurant.name }}
+Order #1
+Total: $18.50
+Thanks for ordering with Robobites!</div>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

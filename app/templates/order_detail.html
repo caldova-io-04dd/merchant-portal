@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.id }}{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="card">
+    <span class="eyebrow">Order details</span>
+    <h1>Order #{{ order.id }}</h1>
+
+    <div class="badge" style="margin-bottom: 18px;">{{ order.status }}</div>
+
+    <table>
+      <tr><th>Customer</th><td>{{ order.customer_name }}</td></tr>
+      <tr><th>Restaurant</th><td>{{ restaurant.name }}</td></tr>
+      <tr><th>Total</th><td>{{ format_price(order.total_cents) }}</td></tr>
+      <tr><th>Status</th><td>{{ order.status }}</td></tr>
+    </table>
+
+    <div style="margin-top: 20px;">
+      <a class="pill" href="{{ url_for('orders.board') }}">Back to orders</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Receipt preview</h2>
+    <img src="{{ url_for('static', filename='robobites-badge.svg') }}" alt="Robobites badge" style="width: 120px; margin-bottom: 12px;">
+    <div class="receipt-box">{{ receipt }}</div>
+  </div>
+</div>
+{% endblock %}

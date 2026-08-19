@@ -1,10 +1,32 @@
 {% extends "base.html" %}
 {% block title %}Sign in{% endblock %}
 {% block content %}
-<h1>Sign in</h1>
-<form method="post" action="{{ url_for('auth.login') }}">
-  <p><input name="email" type="email" placeholder="you@restaurant.io" required></p>
-  <p><input name="password" type="password" placeholder="Password" required></p>
-  <p><button type="submit">Sign in</button></p>
-</form>
+<div class="form-shell">
+  <div class="brand-panel">
+    <img src="{{ url_for('static', filename='robobites-logo.svg') }}" alt="Robobites logo">
+    <h1>Run a smarter neighborhood kitchen.</h1>
+    <p>Track orders, update menu items, and design customer receipts from one modern operations hub built for hungry teams.</p>
+    <div style="margin-top: 22px;">
+      <img src="{{ url_for('static', filename='robobites-hero.svg') }}" alt="Robobites food service dashboard illustration">
+    </div>
+  </div>
+
+  <div class="login-panel">
+    <div class="login-card">
+      <span class="eyebrow">Merchant access</span>
+      <h2 style="margin: 18px 0 8px;">Welcome back</h2>
+      <p class="muted">Sign in to your restaurant dashboard.</p>
+
+      <form method="post" action="{{ url_for('auth.login') }}">
+        <div class="field">
+          <input name="email" type="email" placeholder="you@restaurant.io" required>
+        </div>
+        <div class="field">
+          <input name="password" type="password" placeholder="Password" required>
+        </div>
+        <button type="submit">Sign in</button>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

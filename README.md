@@ -8,6 +8,7 @@ availability, and keep an eye on incoming orders as robots pick them up.
 
 - Menu management: create, edit, and retire menu items with per-item pricing.
 - Live order board: see new, in-progress, and delivered orders at a glance.
+- Clickable order detail pages with a more polished Robobites-branded merchant experience.
 - Availability controls: pause an item or a whole restaurant during a rush.
 - Search across your menu by item name.
 - Printable order receipts with a customizable per-restaurant template.
@@ -31,6 +32,18 @@ python run.py
 ```
 
 The app starts on http://127.0.0.1:5000.
+
+For the Docker-based MDASH demo, build and run the stack from the repo root:
+
+```bash
+docker compose up --build
+```
+
+Then use the exploit CLI from the workspace root:
+
+```bash
+python exploit --target http://localhost:8100 --portal-target http://localhost:5000 --mode all
+```
 
 A couple of seed accounts are created by the migration script so you can log in
 right away:
