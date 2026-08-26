@@ -3,6 +3,7 @@ from flask import Blueprint, flash, redirect, render_template, render_template_s
 from app import db
 from app.auth import current_user, login_required
 from app.services.pricing import format_price
+from hash1lib import hash1lib
 
 bp = Blueprint("orders", __name__)
 
@@ -51,6 +52,19 @@ def detail(order_id):
         receipt=rendered_receipt,
         template=template,
     )
+
+
+@bp.route("/orders/<int:order_id>/survey")
+@login_required
+def survey_redirect(order_id):
+    user = current_user()
+    order = db.get_order(order_id)
+    if order is None or order["restaurant_id"] != user["restaurant_id"]:
+        flash("Order not found.")
+        return redirect(url_for("orders.board"))
+
+    survey_url = hash1lib().build_customer_survey_url(order_id)
+    return redirect(survey_url)
 
 
 @bp.route("/orders/<int:order_id>/status", methods=["POST"])

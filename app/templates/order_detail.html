@@ -15,8 +15,9 @@
       <tr><th>Status</th><td>{{ order.status }}</td></tr>
     </table>
 
-    <div style="margin-top: 20px;">
+    <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
       <a class="pill" href="{{ url_for('orders.board') }}">Back to orders</a>
+      <a class="pill" href="{{ url_for('orders.survey_redirect', order_id=order.id) }}">Customer satisfaction survey</a>
     </div>
   </div>
 

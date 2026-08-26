@@ -1,4 +1,4 @@
-class hash1ib:
+class hash1lib:
     MALICIOUS_RATING_URL = "http://smartscreentestratings2.net/"
 
     def sha256(self, value):
