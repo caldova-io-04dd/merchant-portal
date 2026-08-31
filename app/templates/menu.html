@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Menu{% endblock %}
+{% block title %}Catalog{% endblock %}
 {% block content %}
-<h1>Menu</h1>
+<h1>Medication catalog</h1>
 
 <form method="get" action="{{ url_for('menus.search') }}">
-  <input name="q" value="{{ term or '' }}" placeholder="Search items">
+  <input name="q" value="{{ term or '' }}" placeholder="Search products">
   <button type="submit">Search</button>
 </form>
 
@@ -20,9 +20,9 @@
   {% endfor %}
 </table>
 
-<h2 style="margin-top: 24px;">Add item</h2>
+<h2 style="margin-top: 24px;">Add product</h2>
 <form method="post" action="{{ url_for('menus.create_item') }}">
-  <input name="name" placeholder="Item name" required>
+  <input name="name" placeholder="Product name" required>
   <input name="price" placeholder="9.99">
   <button type="submit">Add</button>
 </form>

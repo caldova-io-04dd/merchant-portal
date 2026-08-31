@@ -1,32 +1,32 @@
-{% extends "base.html" %}
-{% block title %}Sign in{% endblock %}
-{% block content %}
-<div class="form-shell">
-  <div class="brand-panel">
-    <img src="{{ url_for('static', filename='robobites-logo.svg') }}" alt="Robobites logo">
-    <h1>Run a smarter neighborhood kitchen.</h1>
-    <p>Track orders, update menu items, and design customer receipts from one modern operations hub built for hungry teams.</p>
-    <div style="margin-top: 22px;">
-      <img src="{{ url_for('static', filename='robobites-hero.svg') }}" alt="Robobites food service dashboard illustration">
-    </div>
-  </div>
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<div class="form-shell">
+  <div class="brand-panel">
+    <img src="{{ url_for('static', filename='caldova-logo.svg') }}" alt="Caldova logo">
+    <h1>Keep every fulfillment workflow in sync.</h1>
+    <p>Track prescription orders, manage the pharmacy catalog, and design patient receipts from one secure operations hub built for care teams.</p>
+    <div style="margin-top: 22px;">
+      <img src="{{ url_for('static', filename='caldova-hero.svg') }}" alt="Caldova pharmacy operations dashboard illustration">
+    </div>
+  </div>
 
-  <div class="login-panel">
-    <div class="login-card">
-      <span class="eyebrow">Merchant access</span>
-      <h2 style="margin: 18px 0 8px;">Welcome back</h2>
-      <p class="muted">Sign in to your restaurant dashboard.</p>
+  <div class="login-panel">
+    <div class="login-card">
+      <span class="eyebrow">Pharmacy access</span>
+      <h2 style="margin: 18px 0 8px;">Welcome back</h2>
+      <p class="muted">Sign in to your pharmacy operations dashboard.</p>
 
-      <form method="post" action="{{ url_for('auth.login') }}">
-        <div class="field">
-          <input name="email" type="email" placeholder="you@restaurant.io" required>
-        </div>
-        <div class="field">
-          <input name="password" type="password" placeholder="Password" required>
-        </div>
-        <button type="submit">Sign in</button>
-      </form>
-    </div>
-  </div>
-</div>
-{% endblock %}
+      <form method="post" action="{{ url_for('auth.login') }}">
+        <div class="field">
+          <input name="email" type="email" placeholder="you@pharmacy.io" required>
+        </div>
+        <div class="field">
+          <input name="password" type="password" placeholder="Password" required>
+        </div>
+        <button type="submit">Sign in</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

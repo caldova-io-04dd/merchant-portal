@@ -60,8 +60,7 @@ def hash_password(password, salt):
 
 def seed(conn):
     restaurants = [
-        ("B021 Bistro", "owner@b021bistro.io"),
-        ("NoodleBot", "owner@noodlebot.io"),
+        ("Caldova Pharmacy", "owner@caldova.io"),
     ]
     for name, email in restaurants:
         conn.execute(
@@ -70,8 +69,7 @@ def seed(conn):
         )
 
     accounts = [
-        (1, "owner@b021bistro.io", "bistro123", "b021"),
-        (2, "owner@noodlebot.io", "noodle123", "ndle"),
+        (1, "owner@caldova.io", "caldova123", "cald"),
     ]
     for restaurant_id, email, password, salt in accounts:
         conn.execute(
@@ -81,12 +79,9 @@ def seed(conn):
         )
 
     items = [
-        (1, "Truffle Fries", 650),
-        (1, "Robo Burger", 1200),
-        (1, "Garden Salad", 900),
-        (2, "Spicy Ramen", 1400),
-        (2, "Gyoza (6)", 700),
-        (2, "Iced Matcha", 500),
+        (1, "Amoxicillin 500mg", 1450),
+        (1, "Insulin Pen", 2300),
+        (1, "Vitamin D3", 850),
     ]
     for restaurant_id, name, price in items:
         conn.execute(
@@ -98,8 +93,8 @@ def seed(conn):
     orders = [
         (1, "Dana P.", 1850, "new"),
         (1, "Miguel R.", 1200, "preparing"),
-        (2, "Aiko T.", 1900, "ready"),
-        (2, "Sam W.", 500, "delivered"),
+        (1, "Aiko T.", 1900, "ready"),
+        (1, "Sam W.", 500, "delivered"),
     ]
     for restaurant_id, customer, total, status in orders:
         conn.execute(
