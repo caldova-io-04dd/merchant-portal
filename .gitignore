@@ -19,3 +19,10 @@ env/
 
 # Logs
 *.log
+# Generated security scan artifacts
+*.sarif
+*.html
+!**/app/templates/**/*.html
+!**/templates/**/*.html
+!**/client/**/*.html
+!**/public/**/*.html
