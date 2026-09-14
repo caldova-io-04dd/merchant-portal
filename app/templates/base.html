@@ -79,13 +79,20 @@
       background: rgba(249,115,22,0.07);
       color: var(--rb-orange-strong);
     }
-
-    .nav .logout {
-      background: var(--rb-orange);
-      color: white;
-      border-radius: 999px;
-      padding: 8px 14px;
-    }
+
+    .nav form {
+      display: inline;
+      margin: 0;
+    }
+
+    .nav .logout {
+      background: var(--rb-orange);
+      color: white;
+      border-radius: 999px;
+      padding: 8px 14px;
+      box-shadow: none;
+      font: inherit;
+    }
 
     .content {
       max-width: 1200px;
@@ -365,12 +372,14 @@
         <img class="brand-logo" src="{{ url_for('static', filename='caldova-logo.svg') }}" alt="Caldova logo">
       </div>
       <nav class="nav">
-        <a href="{{ url_for('menus.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('menus.dashboard') }}">Dashboard</a>
         <a href="{{ url_for('menus.menu') }}">Catalog</a>
-        <a href="{{ url_for('orders.board') }}">Orders</a>
+        <a href="{{ url_for('orders.board') }}">Orders</a>
         <a href="{{ url_for('receipts.editor') }}">Patient receipts</a>
-        <a class="logout" href="{{ url_for('auth.logout') }}">Sign out</a>
-      </nav>
+        <form method="post" action="{{ url_for('auth.logout') }}">
+          <button type="submit" class="logout">Sign out</button>
+        </form>
+      </nav>
     </div>
   </header>
 

@@ -52,9 +52,13 @@ def search():
 @bp.route("/menu/item/<int:item_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_item(item_id):
+    user = current_user()
     item = db.get_menu_item(item_id)
     if item is None:
         flash("That item no longer exists.")
+        return redirect(url_for("menus.menu"))
+    if item["restaurant_id"] != user["restaurant_id"]:
+        flash("You can only edit menu items for your restaurant.")
         return redirect(url_for("menus.menu"))
 
     if request.method == "POST":
