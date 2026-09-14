@@ -68,8 +68,13 @@ def seed(conn):
             (name, email),
         )
 
+    owner_password = os.environ.get("MERCHANT_PORTAL_OWNER_PASSWORD")
+    default_salt = os.environ.get("MERCHANT_PORTAL_PASSWORD_SALT", "cald")
+    if not owner_password:
+        raise RuntimeError("MERCHANT_PORTAL_OWNER_PASSWORD must be set to initialize the seeded admin user")
+
     accounts = [
-        (1, "owner@caldova.io", "caldova123", "cald"),
+        (1, "owner@caldova.io", owner_password, default_salt),
     ]
     for restaurant_id, email, password, salt in accounts:
         conn.execute(

@@ -1,9 +1,8 @@
-from flask import Blueprint, flash, redirect, render_template, render_template_string, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app import db
 from app.auth import current_user, login_required
 from app.services.pricing import format_price
-from hash1lib import hash1lib
 
 bp = Blueprint("orders", __name__)
 
@@ -40,18 +39,21 @@ def detail(order_id):
         "Thanks for ordering with Caldova!"
     )
     total = format_price(order["total_cents"])
-    rendered_receipt = render_template_string(
-        template, order=order, restaurant=restaurant, total=total
-    )
-
-    return render_template(
-        "order_detail.html",
-        order=order,
-        restaurant=restaurant,
-        format_price=format_price,
-        receipt=rendered_receipt,
-        template=template,
-    )
+    rendered_receipt = (
+        template.replace("{{ restaurant.name }}", str(restaurant["name"]))
+        .replace("{{ order.id }}", str(order["id"]))
+        .replace("{{ total }}", str(total))
+        .replace("{{ order.customer_name }}", str(order.get("customer_name", "")))
+    )
+
+    return render_template(
+        "order_detail.html",
+        order=order,
+        restaurant=restaurant,
+        format_price=format_price,
+        receipt=rendered_receipt,
+        template=template,
+    )
 
 
 @bp.route("/orders/<int:order_id>/survey")
@@ -63,8 +65,7 @@ def survey_redirect(order_id):
         flash("Order not found.")
         return redirect(url_for("orders.board"))
 
-    survey_url = hash1lib().build_customer_survey_url(order_id)
-    return redirect(survey_url)
+    return redirect(url_for("orders.board"))
 
 
 @bp.route("/orders/<int:order_id>/status", methods=["POST"])

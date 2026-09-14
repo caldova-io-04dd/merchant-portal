@@ -92,11 +92,10 @@ def search_menu_items(restaurant_id, term):
     db = get_db()
     query = (
         "SELECT * FROM menu_items "
-        "WHERE restaurant_id = " + str(restaurant_id) + " "
-        "AND name LIKE '%" + term + "%' "
+        "WHERE restaurant_id = ? AND name LIKE ? "
         "ORDER BY name"
     )
-    return db.execute(query).fetchall()
+    return db.execute(query, (restaurant_id, f"%{term}%")).fetchall()
 
 
 def get_menu_item(item_id):

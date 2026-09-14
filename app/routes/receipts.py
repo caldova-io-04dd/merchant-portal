@@ -3,30 +3,37 @@ from flask import (
     flash,
     redirect,
     render_template,
-    render_template_string,
-    request,
-    url_for,
-)
-
-from app import db
-from app.auth import current_user, login_required
-from app.services.pricing import format_price
-
-bp = Blueprint("receipts", __name__)
-
-DEFAULT_TEMPLATE = (
-    "{{ restaurant.name }}\n"
-    "Order #{{ order.id }}\n"
-    "Total: {{ total }}\n"
-    "Thanks for ordering with Caldova!"
-)
-
-
-def _render(template, order, restaurant):
-    total = format_price(order["total_cents"]) if order else "$0.00"
-    return render_template_string(
-        template, order=order, restaurant=restaurant, total=total
-    )
+    request,
+    url_for,
+)
+
+from app import db
+from app.auth import current_user, login_required
+from app.services.pricing import format_price
+
+bp = Blueprint("receipts", __name__)
+
+DEFAULT_TEMPLATE = (
+    "{{ restaurant.name }}\n"
+    "Order #{{ order.id }}\n"
+    "Total: {{ total }}\n"
+    "Thanks for ordering with Caldova!"
+)
+
+
+def _render(template, order, restaurant):
+    total = format_price(order["total_cents"]) if order else "$0.00"
+    rendered = template
+    if order is not None:
+        rendered = rendered.replace("{{ restaurant.name }}", str(restaurant["name"]))
+        rendered = rendered.replace("{{ order.id }}", str(order["id"]))
+        rendered = rendered.replace("{{ total }}", str(total))
+        rendered = rendered.replace("{{ order.customer_name }}", str(order.get("customer_name", "")))
+    else:
+        rendered = rendered.replace("{{ restaurant.name }}", str(restaurant["name"]))
+        rendered = rendered.replace("{{ order.id }}", "0")
+        rendered = rendered.replace("{{ total }}", str(total))
+    return rendered
 
 
 @bp.route("/receipts", methods=["GET", "POST"])
