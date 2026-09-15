@@ -1,5 +1,6 @@
 from flask import (
     Blueprint,
+    abort,
     flash,
     redirect,
     render_template,
@@ -12,6 +13,17 @@ from app.auth import current_user, login_required
 from app.services.pricing import normalize_price, format_price
 
 bp = Blueprint("menus", __name__)
+
+
+def _is_same_origin_post():
+    origin = request.headers.get("Origin")
+    referer = request.headers.get("Referer")
+    app_origin = request.host_url.rstrip("/")
+    if origin:
+        return origin.rstrip("/") == app_origin
+    if referer:
+        return referer.startswith(request.host_url)
+    return False
 
 
 @bp.route("/dashboard")
@@ -62,8 +74,13 @@ def edit_item(item_id):
         return redirect(url_for("menus.menu"))
 
     if request.method == "POST":
+        if not _is_same_origin_post():
+            abort(400)
         name = request.form.get("name", item["name"]).strip()
         price_cents = normalize_price(request.form.get("price", ""))
+        if price_cents is None:
+            flash("Price must be a valid amount under the supported limit.")
+            return redirect(url_for("menus.menu"))
         available = request.form.get("available") == "on"
         db.update_menu_item(item_id, name, price_cents, available)
         flash("Menu item updated.")
@@ -75,11 +92,13 @@ def edit_item(item_id):
 @bp.route("/menu/item/new", methods=["POST"])
 @login_required
 def create_item():
+    if not _is_same_origin_post():
+        abort(400)
     user = current_user()
     name = request.form.get("name", "").strip()
     price_cents = normalize_price(request.form.get("price", ""))
-    if not name:
-        flash("Give the item a name first.")
+    if not name or price_cents is None:
+        flash("Give the item a name and a valid price.")
         return redirect(url_for("menus.menu"))
     db.create_menu_item(user["restaurant_id"], name, price_cents)
     flash("Menu item added.")

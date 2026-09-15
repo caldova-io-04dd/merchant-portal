@@ -7,25 +7,33 @@ between the user-facing dollar strings and the internal cents representation.
 
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
+MAX_PRICE_CENTS = 100_000_000
+
 
 def normalize_price(raw):
     """Parse a user-entered price string into integer cents.
 
-    Accepts values like "12", "12.5", "$12.50". Returns 0 for anything that
-    can't be parsed so a bad form value never crashes a save.
+    Accepts values like "12", "12.5", "$12.50". Returns None for invalid input
+    and rejects values that exceed the supported price range.
     """
     if raw is None:
-        return 0
+        return None
     cleaned = str(raw).strip().lstrip("$").replace(",", "")
     if not cleaned:
-        return 0
+        return None
+    if cleaned.lower() in {"nan", "inf", "-inf", "+inf"}:
+        return None
     try:
         dollars = Decimal(cleaned)
     except InvalidOperation:
-        return 0
+        return None
+    if not dollars.is_finite():
+        return None
     if dollars < 0:
         dollars = Decimal(0)
     cents = (dollars * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+    if cents < 0 or cents > MAX_PRICE_CENTS:
+        return None
     return int(cents)
 
 

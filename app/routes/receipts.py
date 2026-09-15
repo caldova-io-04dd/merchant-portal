@@ -1,8 +1,10 @@
-from flask import (
-    Blueprint,
-    flash,
-    redirect,
-    render_template,
+from html import escape
+
+from flask import (
+    Blueprint,
+    flash,
+    redirect,
+    render_template,
     request,
     url_for,
 )
@@ -25,14 +27,14 @@ def _render(template, order, restaurant):
     total = format_price(order["total_cents"]) if order else "$0.00"
     rendered = template
     if order is not None:
-        rendered = rendered.replace("{{ restaurant.name }}", str(restaurant["name"]))
-        rendered = rendered.replace("{{ order.id }}", str(order["id"]))
-        rendered = rendered.replace("{{ total }}", str(total))
-        rendered = rendered.replace("{{ order.customer_name }}", str(order.get("customer_name", "")))
+        rendered = rendered.replace("{{ restaurant.name }}", escape(str(restaurant["name"])))
+        rendered = rendered.replace("{{ order.id }}", escape(str(order["id"])))
+        rendered = rendered.replace("{{ total }}", escape(str(total)))
+        rendered = rendered.replace("{{ order.customer_name }}", escape(str(order.get("customer_name", ""))))
     else:
-        rendered = rendered.replace("{{ restaurant.name }}", str(restaurant["name"]))
+        rendered = rendered.replace("{{ restaurant.name }}", escape(str(restaurant["name"])))
         rendered = rendered.replace("{{ order.id }}", "0")
-        rendered = rendered.replace("{{ total }}", str(total))
+        rendered = rendered.replace("{{ total }}", escape(str(total)))
     return rendered
 
 

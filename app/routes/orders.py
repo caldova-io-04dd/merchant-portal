@@ -1,5 +1,5 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
-
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+
 from app import db
 from app.auth import current_user, login_required
 from app.services.pricing import format_price
@@ -71,16 +71,28 @@ def survey_redirect(order_id):
 @bp.route("/orders/<int:order_id>/status", methods=["POST"])
 @login_required
 def set_status(order_id):
-    user = current_user()
-    order = db.get_order(order_id)
-    if order is None or order["restaurant_id"] != user["restaurant_id"]:
-        flash("Order not found.")
-        return redirect(url_for("orders.board"))
-
-    new_status = request.form.get("status", "")
-    if new_status not in ALLOWED_STATUSES:
-        flash("Unknown status.")
-        return redirect(url_for("orders.board"))
-
-    db.update_order_status(order_id, new_status)
-    return redirect(url_for("orders.board"))
+    if not request.method == "POST":
+        return redirect(url_for("orders.board"))
+
+    origin = request.headers.get("Origin")
+    referer = request.headers.get("Referer")
+    app_origin = request.host_url.rstrip("/")
+    if origin:
+        if origin.rstrip("/") != app_origin:
+            abort(400)
+    elif referer and not referer.startswith(request.host_url):
+        abort(400)
+
+    user = current_user()
+    order = db.get_order(order_id)
+    if order is None or order["restaurant_id"] != user["restaurant_id"]:
+        flash("Order not found.")
+        return redirect(url_for("orders.board"))
+
+    new_status = request.form.get("status", "")
+    if new_status not in ALLOWED_STATUSES:
+        flash("Unknown status.")
+        return redirect(url_for("orders.board"))
+
+    db.update_order_status(order_id, new_status)
+    return redirect(url_for("orders.board"))
