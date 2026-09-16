@@ -8,21 +8,13 @@ bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 @bp.route("/facilities")
 def facilities():
-    user = current_user()
-    restaurant = db.get_restaurant(user["restaurant_id"])
-    rows = [restaurant] if restaurant is not None else []
+    rows = db.list_facilities()
     return render_template("admin_restaurants.html", restaurants=rows)
 
 
 @bp.route("/facilities/<int:facility_id>/toggle", methods=["POST"])
-@login_required
 def toggle_facility(facility_id):
-    user = current_user()
-    if facility_id != user["restaurant_id"]:
-        return redirect(url_for("admin.facilities"))
-    restaurant = db.get_restaurant(facility_id)
-    if restaurant is not None:
-        db.set_restaurant_active(
-            facility_id, not restaurant["active"], user["restaurant_id"]
-        )
+    facility = db.get_facility(facility_id)
+    if facility is not None:
+        db.set_facility_active(facility_id, not facility["active"])
     return redirect(url_for("admin.facilities"))

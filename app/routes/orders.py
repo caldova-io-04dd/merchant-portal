@@ -13,34 +13,36 @@ ALLOWED_STATUSES = {"new", "preparing", "ready", "delivered"}
 @login_required
 def board():
     user = current_user()
-    status = request.args.get("status")
-    if status and status not in ALLOWED_STATUSES:
-        status = None
-    orders = db.list_orders(user["restaurant_id"], status)
-    return render_template(
-        "orders.html", orders=orders, status=status, format_price=format_price
-    )
-
-
-@bp.route("/orders/<int:order_id>")
-@login_required
-def detail(order_id):
-    user = current_user()
-    order = db.get_order(order_id)
-    if order is None or order["restaurant_id"] != user["restaurant_id"]:
-        flash("Order not found.")
-        return redirect(url_for("orders.board"))
-
-    restaurant = db.get_restaurant(user["restaurant_id"])
-    template = db.get_receipt_template(user["restaurant_id"]) or (
-        "{{ restaurant.name }}\n"
-        "Order #{{ order.id }}\n"
-        "Total: {{ total }}\n"
-        "Thanks for ordering with Caldova!"
-    )
-    total = format_price(order["total_cents"])
+    facility_id = user.get("facility_id") or user.get("restaurant_id")
+    status = request.args.get("status")
+    if status and status not in ALLOWED_STATUSES:
+        status = None
+    orders = db.list_orders(facility_id, status)
+    return render_template(
+        "orders.html", orders=orders, status=status, format_price=format_price
+    )
+
+
+@bp.route("/orders/<int:order_id>")
+@login_required
+def detail(order_id):
+    user = current_user()
+    facility_id = user.get("facility_id") or user.get("restaurant_id")
+    order = db.get_order(order_id)
+    if order is None or order["restaurant_id"] != facility_id:
+        flash("Order not found.")
+        return redirect(url_for("orders.board"))
+
+    facility = db.get_facility(facility_id)
+    template = db.get_receipt_template(facility_id) or (
+        "{{ facility.name }}\n"
+        "Order #{{ order.id }}\n"
+        "Total: {{ total }}\n"
+        "Thanks for ordering with Caldova!"
+    )
+    total = format_price(order["total_cents"])
     rendered_receipt = (
-        template.replace("{{ restaurant.name }}", str(restaurant["name"]))
+        template.replace("{{ facility.name }}", str(facility["name"]))
         .replace("{{ order.id }}", str(order["id"]))
         .replace("{{ total }}", str(total))
         .replace("{{ order.customer_name }}", str(order.get("customer_name", "")))
@@ -49,28 +51,29 @@ def detail(order_id):
     return render_template(
         "order_detail.html",
         order=order,
-        restaurant=restaurant,
+        facility=facility,
         format_price=format_price,
         receipt=rendered_receipt,
         template=template,
     )
-
-
-@bp.route("/orders/<int:order_id>/survey")
-@login_required
-def survey_redirect(order_id):
-    user = current_user()
-    order = db.get_order(order_id)
-    if order is None or order["restaurant_id"] != user["restaurant_id"]:
-        flash("Order not found.")
-        return redirect(url_for("orders.board"))
-
+
+
+@bp.route("/orders/<int:order_id>/survey")
+@login_required
+def survey_redirect(order_id):
+    user = current_user()
+    facility_id = user.get("facility_id") or user.get("restaurant_id")
+    order = db.get_order(order_id)
+    if order is None or order["restaurant_id"] != facility_id:
+        flash("Order not found.")
+        return redirect(url_for("orders.board"))
+
     return redirect(url_for("orders.board"))
-
-
-@bp.route("/orders/<int:order_id>/status", methods=["POST"])
-@login_required
-def set_status(order_id):
+
+
+@bp.route("/orders/<int:order_id>/status", methods=["POST"])
+@login_required
+def set_status(order_id):
     if not request.method == "POST":
         return redirect(url_for("orders.board"))
 
@@ -84,8 +87,9 @@ def set_status(order_id):
         abort(400)
 
     user = current_user()
+    facility_id = user.get("facility_id") or user.get("restaurant_id")
     order = db.get_order(order_id)
-    if order is None or order["restaurant_id"] != user["restaurant_id"]:
+    if order is None or order["restaurant_id"] != facility_id:
         flash("Order not found.")
         return redirect(url_for("orders.board"))
 

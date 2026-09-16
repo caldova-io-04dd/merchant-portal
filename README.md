@@ -10,9 +10,9 @@ moves through the network.
 - Menu management: create, edit, and retire menu items with per-item pricing.
 - Live order board: see new, in-progress, and delivered orders at a glance.
 - Clickable order detail pages with a more polished Caldova-branded merchant experience.
-- Availability controls: pause an item or a whole restaurant during a rush.
+- Availability controls: pause an item or a whole facility during a rush.
 - Search across your menu by item name.
-- Printable order receipts with a customizable per-restaurant template.
+- Printable order receipts with a customizable per-facility template.
 - Lightweight admin tools for the Caldova operations team.
 
 ## Tech stack

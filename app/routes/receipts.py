@@ -16,61 +16,63 @@ from app.services.pricing import format_price
 bp = Blueprint("receipts", __name__)
 
 DEFAULT_TEMPLATE = (
-    "{{ restaurant.name }}\n"
+    "{{ facility.name }}\n"
     "Order #{{ order.id }}\n"
     "Total: {{ total }}\n"
     "Thanks for ordering with Caldova!"
 )
 
 
-def _render(template, order, restaurant):
+def _render(template, order, facility):
     total = format_price(order["total_cents"]) if order else "$0.00"
     rendered = template
     if order is not None:
-        rendered = rendered.replace("{{ restaurant.name }}", escape(str(restaurant["name"])))
+        rendered = rendered.replace("{{ facility.name }}", escape(str(facility["name"])))
         rendered = rendered.replace("{{ order.id }}", escape(str(order["id"])))
         rendered = rendered.replace("{{ total }}", escape(str(total)))
         rendered = rendered.replace("{{ order.customer_name }}", escape(str(order.get("customer_name", ""))))
     else:
-        rendered = rendered.replace("{{ restaurant.name }}", escape(str(restaurant["name"])))
+        rendered = rendered.replace("{{ facility.name }}", escape(str(facility["name"])))
         rendered = rendered.replace("{{ order.id }}", "0")
         rendered = rendered.replace("{{ total }}", escape(str(total)))
     return rendered
-
-
+
+
 @bp.route("/receipts", methods=["GET", "POST"])
 @login_required
 def editor():
     user = current_user()
-    restaurant = db.get_restaurant(user["restaurant_id"])
-    template = db.get_receipt_template(user["restaurant_id"]) or DEFAULT_TEMPLATE
-
-    preview = None
-    if request.method == "POST":
-        template = request.form.get("template", "")
-        if request.form.get("action") == "save":
-            db.set_receipt_template(user["restaurant_id"], template)
-            flash("Receipt template saved.")
-        sample = db.list_orders(user["restaurant_id"])
-        order = sample[0] if sample else None
-        preview = _render(template, order, restaurant)
-
-    return render_template(
-        "receipts.html",
-        restaurant=restaurant,
-        template=template,
-        preview=preview,
-    )
-
-
-@bp.route("/receipts/order/<int:order_id>")
-@login_required
-def print_receipt(order_id):
-    user = current_user()
-    order = db.get_order(order_id)
-    if order is None or order["restaurant_id"] != user["restaurant_id"]:
-        flash("Order not found.")
-        return redirect(url_for("orders.board"))
-    restaurant = db.get_restaurant(user["restaurant_id"])
-    template = db.get_receipt_template(user["restaurant_id"]) or DEFAULT_TEMPLATE
-    return _render(template, order, restaurant)
+    facility_id = user.get("facility_id") or user.get("restaurant_id")
+    facility = db.get_facility(facility_id)
+    template = db.get_receipt_template(facility_id) or DEFAULT_TEMPLATE
+
+    preview = None
+    if request.method == "POST":
+        template = request.form.get("template", "")
+        if request.form.get("action") == "save":
+            db.set_receipt_template(facility_id, template)
+            flash("Receipt template saved.")
+        sample = db.list_orders(facility_id)
+        order = sample[0] if sample else None
+        preview = _render(template, order, facility)
+
+    return render_template(
+        "receipts.html",
+        facility=facility,
+        template=template,
+        preview=preview,
+    )
+
+
+@bp.route("/receipts/order/<int:order_id>")
+@login_required
+def print_receipt(order_id):
+    user = current_user()
+    facility_id = user.get("facility_id") or user.get("restaurant_id")
+    order = db.get_order(order_id)
+    if order is None or order["restaurant_id"] != facility_id:
+        flash("Order not found.")
+        return redirect(url_for("orders.board"))
+    facility = db.get_facility(facility_id)
+    template = db.get_receipt_template(facility_id) or DEFAULT_TEMPLATE
+    return _render(template, order, facility)

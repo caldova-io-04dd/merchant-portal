@@ -5,10 +5,10 @@
   <section class="panel hero">
     <div class="hero-copy">
       <span class="eyebrow">Operations overview</span>
-      <h1>{{ restaurant.name }}</h1>
-      <div class="badge">{{ "Open for service" if restaurant.active else "Paused" }}</div>
+      <h1>{{ facility.name }}</h1>
+      <div class="badge">{{ "Open for service" if facility.active else "Paused" }}</div>
       <p>Keep fulfillment times tight, track patient orders, and ensure every medicine delivery arrives on time with the right care instructions.</p>
-
+
       <div class="stat-grid">
         <div class="stat">
           <span class="muted">Open orders</span>
@@ -20,7 +20,7 @@
         </div>
         <div class="stat">
           <span class="muted">Status</span>
-          <strong>{{ "Live" if restaurant.active else "Paused" }}</strong>
+          <strong>{{ "Live" if facility.active else "Paused" }}</strong>
         </div>
       </div>
     </div>

@@ -20,17 +20,31 @@ def verify_password(user, password):
 
 def login_user(user):
     session["user_id"] = user["id"]
-    session["restaurant_id"] = user["restaurant_id"]
+    session["facility_id"] = user.get("restaurant_id") or user.get("facility_id")
+    session["restaurant_id"] = session["facility_id"]
 
 
 def logout_user():
     session.clear()
 
 
+def current_facility_id():
+    if "facility_id" in session:
+        return session["facility_id"]
+    if "restaurant_id" in session:
+        return session["restaurant_id"]
+    user = current_user()
+    if user is None:
+        return None
+    return user.get("facility_id") or user.get("restaurant_id")
+
+
 def current_user():
     if "user" not in g:
         user_id = session.get("user_id")
         g.user = db.get_user(user_id) if user_id else None
+        if g.user is not None:
+            g.user["facility_id"] = g.user.get("facility_id") or g.user.get("restaurant_id")
     return g.user
 
 
