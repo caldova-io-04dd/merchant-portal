@@ -4,12 +4,12 @@ from app import db
 from app.auth import current_user, login_required
 from app.services.pricing import format_price
 
-bp = Blueprint("orders", __name__)
-
-ALLOWED_STATUSES = {"new", "preparing", "ready", "delivered"}
-
-
-@bp.route("/orders")
+bp = Blueprint("orders", __name__)
+
+ALLOWED_STATUSES = {"new", "preparing", "ready", "delivered"}
+
+
+@bp.route("/orders")
 @login_required
 def board():
     user = current_user()

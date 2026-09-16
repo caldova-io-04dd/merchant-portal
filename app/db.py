@@ -50,13 +50,14 @@ def list_restaurants():
     ).fetchall()
 
 
-def set_restaurant_active(restaurant_id, active):
+def set_restaurant_active(restaurant_id, active, authorized_restaurant_id):
     db = get_db()
-    db.execute(
-        "UPDATE restaurants SET active = ? WHERE id = ?",
-        (1 if active else 0, restaurant_id),
+    cursor = db.execute(
+        "UPDATE restaurants SET active = ? WHERE id = ? AND id = ?",
+        (1 if active else 0, restaurant_id, authorized_restaurant_id),
     )
     db.commit()
+    return cursor.rowcount == 1
 
 
 def get_receipt_template(restaurant_id):

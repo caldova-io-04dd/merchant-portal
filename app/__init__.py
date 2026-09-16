@@ -1,7 +1,8 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, request, url_for
 
 from config import Config
 from app import db
+from app.auth import current_user
 
 
 def create_app(config_object=Config):
@@ -21,6 +22,11 @@ def create_app(config_object=Config):
     app.register_blueprint(orders_bp)
     app.register_blueprint(receipts_bp)
     app.register_blueprint(admin_bp)
+
+    @app.before_request
+    def require_admin_authentication():
+        if request.blueprint == "admin" and current_user() is None:
+            return redirect(url_for("auth.login"))
 
     @app.route("/")
     def index():
