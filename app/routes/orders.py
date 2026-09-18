@@ -9,10 +9,18 @@ bp = Blueprint("orders", __name__)
 ALLOWED_STATUSES = {"new", "preparing", "ready", "delivered"}
 
 
+def _row_value(row, key, default=None):
+    if row is None:
+        return default
+    if isinstance(row, dict):
+        return row.get(key, default)
+    return row[key] if key in row.keys() else default
+
+
 @bp.route("/orders")
-@login_required
-def board():
-    user = current_user()
+@login_required
+def board():
+    user = current_user()
     facility_id = user.get("facility_id") or user.get("restaurant_id")
     status = request.args.get("status")
     if status and status not in ALLOWED_STATUSES:
@@ -45,7 +53,7 @@ def detail(order_id):
         template.replace("{{ facility.name }}", str(facility["name"]))
         .replace("{{ order.id }}", str(order["id"]))
         .replace("{{ total }}", str(total))
-        .replace("{{ order.customer_name }}", str(order.get("customer_name", "")))
+        .replace("{{ order.customer_name }}", str(_row_value(order, "customer_name", "")))
     )
 
     return render_template(

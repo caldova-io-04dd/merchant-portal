@@ -23,6 +23,14 @@ DEFAULT_TEMPLATE = (
 )
 
 
+def _row_value(row, key, default=None):
+    if row is None:
+        return default
+    if isinstance(row, dict):
+        return row.get(key, default)
+    return row[key] if key in row.keys() else default
+
+
 def _render(template, order, facility):
     total = format_price(order["total_cents"]) if order else "$0.00"
     rendered = template
@@ -30,7 +38,7 @@ def _render(template, order, facility):
         rendered = rendered.replace("{{ facility.name }}", escape(str(facility["name"])))
         rendered = rendered.replace("{{ order.id }}", escape(str(order["id"])))
         rendered = rendered.replace("{{ total }}", escape(str(total)))
-        rendered = rendered.replace("{{ order.customer_name }}", escape(str(order.get("customer_name", ""))))
+        rendered = rendered.replace("{{ order.customer_name }}", escape(str(_row_value(order, "customer_name", ""))))
     else:
         rendered = rendered.replace("{{ facility.name }}", escape(str(facility["name"])))
         rendered = rendered.replace("{{ order.id }}", "0")
