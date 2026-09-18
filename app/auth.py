@@ -12,6 +12,23 @@ def _hash_password(password, salt):
     return hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
 
 
+def _row_value(row, *keys):
+    if row is None:
+        return None
+    if isinstance(row, dict):
+        for key in keys:
+            value = row.get(key)
+            if value is not None:
+                return value
+        return None
+    for key in keys:
+        if key in row.keys():
+            value = row[key]
+            if value is not None:
+                return value
+    return None
+
+
 def verify_password(user, password):
     expected = user["password_hash"]
     candidate = _hash_password(password, user["password_salt"])
@@ -19,8 +36,9 @@ def verify_password(user, password):
 
 
 def login_user(user):
+    user = dict(user) if not isinstance(user, dict) else user
     session["user_id"] = user["id"]
-    session["facility_id"] = user.get("restaurant_id") or user.get("facility_id")
+    session["facility_id"] = _row_value(user, "facility_id", "restaurant_id")
     session["restaurant_id"] = session["facility_id"]
 
 
@@ -36,7 +54,7 @@ def current_facility_id():
     user = current_user()
     if user is None:
         return None
-    return user.get("facility_id") or user.get("restaurant_id")
+    return _row_value(user, "facility_id", "restaurant_id")
 
 
 def current_user():
@@ -44,7 +62,8 @@ def current_user():
         user_id = session.get("user_id")
         g.user = db.get_user(user_id) if user_id else None
         if g.user is not None:
-            g.user["facility_id"] = g.user.get("facility_id") or g.user.get("restaurant_id")
+            g.user = dict(g.user)
+            g.user["facility_id"] = _row_value(g.user, "facility_id", "restaurant_id")
     return g.user
 
 
